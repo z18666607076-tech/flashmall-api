@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
 use Tests\TestCase;
@@ -19,3 +20,9 @@ uses(TestCase::class, RefreshDatabase::class)
         Cache::flush();
     })
     ->in('Feature');
+
+uses(TestCase::class, DatabaseMigrations::class)
+    ->beforeEach(function () {
+        Cache::flush();
+    })
+    ->in('Concurrency');

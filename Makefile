@@ -10,7 +10,12 @@ logs:
 	docker compose logs -f app
 
 test:
-	docker compose exec -T -e DB_DATABASE=flashmall_testing app php artisan test
+	docker compose exec -T \
+		-e APP_ENV=testing \
+		-e DB_DATABASE=flashmall_testing \
+		-e QUEUE_CONNECTION=sync \
+		-e SESSION_DRIVER=array \
+		app php artisan test
 
 lint:
 	docker compose exec -T app vendor/bin/pint --test

@@ -32,7 +32,7 @@ it('hides draft products from the public detail endpoint', function () {
 });
 
 it('creates a product with a sku and updates stock with an optimistic version', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->admin()->create();
     $category = Category::factory()->create();
 
     $created = $this->actingAs($user, 'sanctum')

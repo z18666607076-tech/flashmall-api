@@ -16,7 +16,7 @@ it('lists categories without authentication', function () {
 });
 
 it('creates updates and deletes a category', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->admin()->create();
     $parent = Category::factory()->create();
 
     $created = $this->actingAs($user, 'sanctum')
@@ -50,7 +50,7 @@ it('creates updates and deletes a category', function () {
 });
 
 it('refuses to delete a category that still has products or children', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->admin()->create();
     $category = Category::factory()->create();
     Product::factory()->create(['category_id' => $category->id]);
 
@@ -61,7 +61,7 @@ it('refuses to delete a category that still has products or children', function 
 });
 
 it('rejects a category nested under its own descendant', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->admin()->create();
     $parent = Category::factory()->create();
     $child = Category::factory()->create(['parent_id' => $parent->id]);
 
@@ -73,4 +73,15 @@ it('rejects a category nested under its own descendant', function () {
         ])
         ->assertUnprocessable()
         ->assertJsonValidationErrors('parent_id');
+});
+
+it('rejects catalog writes from a customer', function () {
+    $user = User::factory()->create();
+
+    $this->actingAs($user, 'sanctum')
+        ->postJson('/api/v1/categories', [
+            'name' => 'Home',
+            'slug' => 'home',
+        ])
+        ->assertForbidden();
 });

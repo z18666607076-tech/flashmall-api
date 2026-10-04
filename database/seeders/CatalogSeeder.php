@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Enums\ProductStatus;
+use App\FlashSales\CreateFlashSale;
 use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Database\Seeder;
@@ -37,6 +38,19 @@ class CatalogSeeder extends Seeder
         $this->product($home, 'Ceramic Mug', 'ceramic-mug', '350ml stoneware mug.', [
             ['attrs' => ['color' => 'sand'], 'price_cents' => 3200, 'stock' => 120],
         ]);
+
+        $earbuds = Product::query()->where('slug', 'wireless-earbuds')->firstOrFail();
+        $sku = $earbuds->skus()->orderBy('id')->firstOrFail();
+
+        app(CreateFlashSale::class)->execute(
+            (int) $sku->id,
+            'Earbuds flash sale',
+            19900,
+            now(),
+            now()->addDays(2),
+            10,
+            1,
+        );
     }
 
     private function category(string $name, string $slug, int $sort, ?Category $parent = null): Category
