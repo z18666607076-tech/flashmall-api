@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\V1\CategoryController;
 use App\Http\Controllers\Api\V1\FlashSaleController;
 use App\Http\Controllers\Api\V1\HealthController;
 use App\Http\Controllers\Api\V1\OrderController;
+use App\Http\Controllers\Api\V1\PaymentWebhookController;
 use App\Http\Controllers\Api\V1\ProductController;
 use App\Http\Controllers\Api\V1\SkuController;
 use Illuminate\Support\Facades\Route;
@@ -24,6 +25,9 @@ Route::prefix('v1')->group(function (): void {
     Route::get('flash-sales', [FlashSaleController::class, 'index']);
     Route::get('flash-sales/{flashSale}', [FlashSaleController::class, 'show']);
 
+    Route::post('payments/wechat/notify', [PaymentWebhookController::class, 'wechat']);
+    Route::post('payments/stripe/webhook', [PaymentWebhookController::class, 'stripe']);
+
     Route::middleware('auth:sanctum')->group(function (): void {
         Route::get('auth/me', [AuthController::class, 'me']);
 
@@ -36,6 +40,7 @@ Route::prefix('v1')->group(function (): void {
         Route::get('orders', [OrderController::class, 'index']);
         Route::get('orders/{order}', [OrderController::class, 'show']);
         Route::post('orders/{order}/cancel', [OrderController::class, 'cancel']);
+        Route::post('orders/{order}/pay', [OrderController::class, 'pay']);
         Route::post('orders/{order}/ship', [OrderController::class, 'ship']);
         Route::post('orders/{order}/complete', [OrderController::class, 'complete']);
         Route::post('orders/{order}/refund', [OrderController::class, 'refund']);

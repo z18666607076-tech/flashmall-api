@@ -5,12 +5,16 @@ namespace App\Http\Controllers\Api\V1;
 use App\Exceptions\CommerceException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Orders\CheckoutOrderRequest;
+use App\Http\Requests\Orders\PayOrderRequest;
 use App\Http\Resources\OrderResource;
+use App\Http\Resources\PaymentIntentResource;
 use App\Models\Order;
 use App\Models\User;
 use App\Orders\CancelOrder;
 use App\Orders\PlaceOrder;
+use App\Orders\RefundOrder;
 use App\Orders\TransitionOrder;
+use App\Payments\PayOrder;
 use Dedoc\Scramble\Attributes\Group;
 use Dedoc\Scramble\Attributes\HeaderParameter;
 use Illuminate\Http\JsonResponse;
@@ -72,9 +76,18 @@ class OrderController extends Controller
         return OrderResource::make($transitions->complete($order));
     }
 
-    public function refund(Order $order, TransitionOrder $transitions): OrderResource
+    public function pay(PayOrderRequest $request, Order $order, PayOrder $pay): PaymentIntentResource
     {
-        return OrderResource::make($transitions->refund($order));
+        return PaymentIntentResource::make($pay->execute(
+            $this->user($request),
+            $order,
+            $request->string('channel')->toString(),
+        ));
+    }
+
+    public function refund(Order $order, RefundOrder $refunds): OrderResource
+    {
+        return OrderResource::make($refunds->execute($order));
     }
 
     private function user(Request $request): User

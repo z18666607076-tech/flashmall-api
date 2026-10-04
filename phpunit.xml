@@ -41,6 +41,7 @@
         <env name="REDIS_HOST" value="127.0.0.1" force="false"/>
         <env name="REDIS_PORT" value="6379" force="false"/>
         <env name="WECHAT_DRIVER" value="fake" force="true"/>
+        <env name="PAYMENTS_DRIVER" value="fake" force="true"/>
         <env name="PULSE_ENABLED" value="false"/>
         <env name="TELESCOPE_ENABLED" value="false"/>
         <env name="NIGHTWATCH_ENABLED" value="false"/>

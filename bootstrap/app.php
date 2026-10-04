@@ -1,6 +1,7 @@
 <?php
 
 use App\Exceptions\CommerceException;
+use App\Exceptions\PaymentSignatureException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -39,6 +40,8 @@ return Application::configure(basePath: dirname(__DIR__))
                 ], 401);
             }
         });
+
+        $exceptions->dontReport(PaymentSignatureException::class);
 
         $exceptions->dontReportWhen(function (Throwable $exception): bool {
             return $exception instanceof CommerceException && $exception->status < 500;

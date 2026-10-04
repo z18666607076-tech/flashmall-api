@@ -1,19 +1,21 @@
 <?php
 
-use App\Contracts\PaymentGateway;
-use App\Exceptions\CommerceException;
-use App\Models\Order;
-use App\Payments\UnconfiguredPaymentGateway;
+use App\Payments\FakeStripeGateway;
 use Tests\TestCase;
 
 uses(TestCase::class);
+use App\Payments\FakeWeChatPayGateway;
+use App\Payments\HttpStripeGateway;
+use App\Payments\PaymentGateways;
 
-it('binds a payment gateway that does not charge yet', function () {
-    $gateway = app(PaymentGateway::class);
+it('resolves fake payment gateways unless the http driver is selected', function () {
+    $gateways = app(PaymentGateways::class);
 
-    expect($gateway)->toBeInstanceOf(UnconfiguredPaymentGateway::class)
-        ->and($gateway->channel())->toBe('unconfigured');
+    expect($gateways->get('wechat'))->toBeInstanceOf(FakeWeChatPayGateway::class)
+        ->and($gateways->get('stripe'))->toBeInstanceOf(FakeStripeGateway::class)
+        ->and($gateways->get('wechat')->channel())->toBe('wechat');
 
-    expect(fn () => $gateway->initiate(new Order))
-        ->toThrow(CommerceException::class, 'No payment gateway is configured');
+    config(['payments.driver' => 'http']);
+
+    expect($gateways->get('stripe'))->toBeInstanceOf(HttpStripeGateway::class);
 });

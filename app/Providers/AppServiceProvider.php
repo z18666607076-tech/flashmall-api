@@ -2,13 +2,11 @@
 
 namespace App\Providers;
 
-use App\Contracts\PaymentGateway;
 use App\Contracts\WeChatMiniProgramClient;
 use App\Jobs\CancelUnpaidOrder;
 use App\Jobs\CloseFlashSale;
 use App\Jobs\CreateFlashSaleOrder;
 use App\Models\User;
-use App\Payments\UnconfiguredPaymentGateway;
 use App\WeChat\FakeWeChatMiniProgramClient;
 use App\WeChat\HttpWeChatMiniProgramClient;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -23,8 +21,6 @@ class AppServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        $this->app->bind(PaymentGateway::class, UnconfiguredPaymentGateway::class);
-
         $this->app->bind(WeChatMiniProgramClient::class, function ($app): WeChatMiniProgramClient {
             return match (config('wechat.driver')) {
                 'http' => $app->make(HttpWeChatMiniProgramClient::class),

@@ -6,6 +6,9 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property array<string, mixed> $snapshot
+ */
 #[Fillable(['order_id', 'sku_id', 'quantity', 'unit_price_cents', 'currency', 'snapshot'])]
 class OrderItem extends Model
 {

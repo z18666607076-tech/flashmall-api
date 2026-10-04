@@ -18,6 +18,7 @@ abstract class TestCase extends BaseTestCase
             'CACHE_STORE' => 'redis',
             'DB_CONNECTION' => 'mysql',
             'WECHAT_DRIVER' => 'fake',
+            'PAYMENTS_DRIVER' => 'fake',
             'DB_URL' => '',
         ] as $name => $value) {
             putenv($name.'='.$value);

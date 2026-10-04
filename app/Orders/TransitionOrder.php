@@ -15,11 +15,18 @@ class TransitionOrder
         private ProductCache $cache,
     ) {}
 
-    public function markPaid(Order $order, ?string $channel = null): Order
+    public function markPaid(Order $order, ?string $channel = null, ?string $providerReference = null): Order
     {
-        return $this->move($order, OrderStatus::Paid, function (Order $locked) use ($channel): void {
+        return $this->move($order, OrderStatus::Paid, function (Order $locked) use ($channel, $providerReference): void {
             $locked->paid_at = now();
-            $locked->payment_channel = $channel;
+
+            if (is_string($channel) && $channel !== '') {
+                $locked->payment_channel = $channel;
+            }
+
+            if (is_string($providerReference) && $providerReference !== '') {
+                $locked->provider_reference = $providerReference;
+            }
         });
     }
 

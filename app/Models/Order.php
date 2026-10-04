@@ -20,6 +20,8 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $shipped_at
  * @property Carbon|null $completed_at
  * @property Carbon|null $refunded_at
+ * @property string|null $provider_reference
+ * @property array<string, mixed>|null $payment_payload
  */
 #[Fillable([
     'order_no',
@@ -28,6 +30,8 @@ use Illuminate\Support\Carbon;
     'total_cents',
     'currency',
     'payment_channel',
+    'provider_reference',
+    'payment_payload',
     'idempotency_key',
     'expires_at',
     'paid_at',
@@ -47,6 +51,7 @@ class Order extends Model
             'user_id' => 'integer',
             'status' => OrderStatus::class,
             'total_cents' => 'integer',
+            'payment_payload' => 'array',
             'expires_at' => 'datetime',
             'paid_at' => 'datetime',
             'cancelled_at' => 'datetime',
