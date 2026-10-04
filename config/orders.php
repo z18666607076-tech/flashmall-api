@@ -9,7 +9,7 @@ return [
     |
     | Checkout moves stock into a pending_payment order. A delayed job cancels
     | the order and restores stock when this many seconds pass without payment.
-    | The next milestone's payment webhook is what marks the order paid.
+    | A verified payment webhook is what marks the order paid.
     |
     */
 

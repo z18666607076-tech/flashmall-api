@@ -24,6 +24,7 @@ class OrderResource extends JsonResource
             'total_cents' => $this->total_cents,
             'currency' => $this->currency,
             'payment_channel' => $this->payment_channel,
+            'provider_reference' => $this->provider_reference,
             'expires_at' => $this->expires_at?->toIso8601String(),
             'paid_at' => $this->paid_at?->toIso8601String(),
             'cancelled_at' => $this->cancelled_at?->toIso8601String(),

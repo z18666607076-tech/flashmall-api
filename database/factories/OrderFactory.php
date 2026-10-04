@@ -25,6 +25,8 @@ class OrderFactory extends Factory
             'total_cents' => 1000,
             'currency' => 'CNY',
             'payment_channel' => null,
+            'provider_reference' => null,
+            'payment_payload' => null,
             'idempotency_key' => null,
             'expires_at' => now()->addMinutes(15),
         ];

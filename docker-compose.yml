@@ -33,6 +33,7 @@ services:
       WECHAT_MINI_PROGRAM_SECRET: ""
       CATALOG_CACHE_TTL: 600
       ORDER_UNPAID_TTL_SECONDS: 900
+      PAYMENTS_DRIVER: fake
     depends_on:
       mysql:
         condition: service_healthy
@@ -50,7 +51,7 @@ services:
     build:
       context: .
       dockerfile: docker/php/Dockerfile
-    entrypoint: ["php", "artisan", "queue:work", "redis", "--queue=orders,default", "--sleep=1", "--tries=3", "--no-interaction"]
+    entrypoint: ["php", "artisan", "horizon"]
     environment:
       APP_NAME: FlashMall
       APP_ENV: local
@@ -77,6 +78,7 @@ services:
       WECHAT_MINI_PROGRAM_SECRET: ""
       CATALOG_CACHE_TTL: 600
       ORDER_UNPAID_TTL_SECONDS: 900
+      PAYMENTS_DRIVER: fake
     depends_on:
       app:
         condition: service_healthy

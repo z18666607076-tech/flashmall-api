@@ -2,7 +2,7 @@ FROM php:8.4-cli-bookworm
 
 COPY --from=mlocati/php-extension-installer:2 /usr/bin/install-php-extensions /usr/local/bin/
 
-RUN install-php-extensions pdo_mysql bcmath intl zip opcache redis \
+RUN install-php-extensions pdo_mysql bcmath intl zip opcache redis pcntl posix \
     && apt-get update \
     && apt-get install -y --no-install-recommends curl \
     && rm -rf /var/lib/apt/lists/*
