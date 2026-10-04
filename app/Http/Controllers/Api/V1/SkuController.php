@@ -11,8 +11,10 @@ use App\Models\Product;
 use App\Models\Sku;
 use Dedoc\Scramble\Attributes\Group;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Routing\Attributes\Controllers\Authorize;
 
 #[Group('Catalog', weight: 2)]
+#[Authorize('admin')]
 class SkuController extends Controller
 {
     public function store(StoreSkuRequest $request, Product $product, ProductCache $cache): JsonResponse

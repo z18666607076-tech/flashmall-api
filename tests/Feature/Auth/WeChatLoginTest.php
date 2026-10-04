@@ -14,6 +14,7 @@ it('issues a sanctum token for a wechat login code', function () {
     $response->assertOk()
         ->assertJsonPath('token_type', 'Bearer')
         ->assertJsonPath('user.name', 'Ada')
+        ->assertJsonPath('user.is_admin', false)
         ->assertJsonStructure(['token', 'user' => ['id', 'wechat_openid', 'wechat_unionid']]);
 
     Http::assertNothingSent();
@@ -24,7 +25,8 @@ it('issues a sanctum token for a wechat login code', function () {
         ->getJson('/api/v1/auth/me')
         ->assertOk()
         ->assertJsonPath('data.name', 'Ada')
-        ->assertJsonPath('data.wechat_openid', $response->json('user.wechat_openid'));
+        ->assertJsonPath('data.wechat_openid', $response->json('user.wechat_openid'))
+        ->assertJsonPath('data.is_admin', false);
 });
 
 it('logs the same mini program user in again', function () {

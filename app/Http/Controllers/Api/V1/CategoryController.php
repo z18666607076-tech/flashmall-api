@@ -11,8 +11,10 @@ use App\Models\Category;
 use Dedoc\Scramble\Attributes\Group;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Routing\Attributes\Controllers\Authorize;
 
 #[Group('Catalog', weight: 2)]
+#[Authorize('admin', only: ['store', 'update', 'destroy'])]
 class CategoryController extends Controller
 {
     public function index(): AnonymousResourceCollection

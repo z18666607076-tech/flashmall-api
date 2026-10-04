@@ -25,7 +25,7 @@ it('returns a consistent unauthenticated payload', function () {
 });
 
 it('returns validation errors as json', function () {
-    $this->actingAs(User::factory()->create(), 'sanctum')
+    $this->actingAs(User::factory()->admin()->create(), 'sanctum')
         ->postJson('/api/v1/products', [])
         ->assertUnprocessable()
         ->assertJsonStructure([

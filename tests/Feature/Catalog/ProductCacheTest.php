@@ -4,7 +4,7 @@ use App\Models\Product;
 use App\Models\User;
 
 it('serves a published product from cache until a write flushes it', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->admin()->create();
     $product = Product::factory()->create(['title' => 'Cached title']);
 
     $this->getJson("/api/v1/products/{$product->id}")
@@ -33,7 +33,7 @@ it('serves a published product from cache until a write flushes it', function ()
 });
 
 it('serves the product index from cache until a write flushes it', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->admin()->create();
     $product = Product::factory()->create(['title' => 'Listed title']);
 
     $this->getJson('/api/v1/products')

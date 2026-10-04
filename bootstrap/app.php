@@ -1,5 +1,6 @@
 <?php
 
+use App\Exceptions\CommerceException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -36,6 +37,18 @@ return Application::configure(basePath: dirname(__DIR__))
                 return response()->json([
                     'message' => 'Unauthenticated.',
                 ], 401);
+            }
+        });
+
+        $exceptions->dontReportWhen(function (Throwable $exception): bool {
+            return $exception instanceof CommerceException && $exception->status < 500;
+        });
+
+        $exceptions->render(function (CommerceException $exception, Request $request) {
+            if ($request->is('api/*') || $request->expectsJson()) {
+                return response()->json([
+                    'message' => $exception->getMessage(),
+                ], $exception->status);
             }
         });
 

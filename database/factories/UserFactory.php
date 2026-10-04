@@ -31,6 +31,7 @@ class UserFactory extends Factory
             'password' => static::$password ??= Hash::make('password'),
             'wechat_openid' => null,
             'wechat_unionid' => null,
+            'is_admin' => false,
             'remember_token' => Str::random(10),
         ];
     }
@@ -38,6 +39,13 @@ class UserFactory extends Factory
     /**
      * State for a user that signed in through a mini program.
      */
+    public function admin(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'is_admin' => true,
+        ]);
+    }
+
     public function wechat(): static
     {
         return $this->state(fn (array $attributes) => [

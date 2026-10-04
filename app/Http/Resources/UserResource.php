@@ -22,6 +22,7 @@ class UserResource extends JsonResource
             'email' => $this->email,
             'wechat_openid' => $this->wechat_openid,
             'wechat_unionid' => $this->wechat_unionid,
+            'is_admin' => $this->is_admin,
             'created_at' => $this->created_at?->toIso8601String(),
         ];
     }

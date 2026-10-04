@@ -20,7 +20,10 @@ COPY . .
 RUN composer install --no-interaction --prefer-dist \
     && mkdir -p storage/framework/cache/data storage/framework/sessions storage/framework/views storage/logs bootstrap/cache \
         vendor/pestphp/pest-plugin-mutate/.temp/pest-mutate-cache \
-    && chown -R www-data:www-data storage bootstrap/cache vendor/pestphp/pest-plugin-mutate/.temp
+        vendor/pestphp/pest/.temp \
+    && chown -R www-data:www-data storage bootstrap/cache \
+        vendor/pestphp/pest-plugin-mutate/.temp \
+        vendor/pestphp/pest/.temp
 
 USER www-data
 

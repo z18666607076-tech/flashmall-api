@@ -13,8 +13,10 @@ use App\Models\Product;
 use Dedoc\Scramble\Attributes\Group;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Routing\Attributes\Controllers\Authorize;
 
 #[Group('Catalog', weight: 2)]
+#[Authorize('admin', only: ['store', 'update', 'destroy'])]
 class ProductController extends Controller
 {
     public function index(ListProductsRequest $request, ProductCache $cache): AnonymousResourceCollection

@@ -1,5 +1,6 @@
 services:
   app:
+    image: flashmall-app
     build:
       context: .
       dockerfile: docker/php/Dockerfile
@@ -31,6 +32,7 @@ services:
       WECHAT_MINI_PROGRAM_APP_ID: ""
       WECHAT_MINI_PROGRAM_SECRET: ""
       CATALOG_CACHE_TTL: 600
+      ORDER_UNPAID_TTL_SECONDS: 900
     depends_on:
       mysql:
         condition: service_healthy
@@ -42,6 +44,43 @@ services:
       timeout: 5s
       retries: 20
       start_period: 40s
+
+  worker:
+    image: flashmall-app
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    entrypoint: ["php", "artisan", "queue:work", "redis", "--queue=orders,default", "--sleep=1", "--tries=3", "--no-interaction"]
+    environment:
+      APP_NAME: FlashMall
+      APP_ENV: local
+      APP_DEBUG: "true"
+      APP_URL: http://localhost:8000
+      APP_KEY: "base64:AXi+IBFffA0Fn1oNU1TQHTkEA9B1Rag+sMjInD17x8I="
+      APP_LOCALE: en
+      APP_FALLBACK_LOCALE: en
+      LOG_CHANNEL: stderr
+      DB_CONNECTION: mysql
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_DATABASE: flashmall
+      DB_USERNAME: flashmall
+      DB_PASSWORD: secret
+      SESSION_DRIVER: redis
+      QUEUE_CONNECTION: redis
+      CACHE_STORE: redis
+      REDIS_CLIENT: phpredis
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      WECHAT_DRIVER: fake
+      WECHAT_MINI_PROGRAM_APP_ID: ""
+      WECHAT_MINI_PROGRAM_SECRET: ""
+      CATALOG_CACHE_TTL: 600
+      ORDER_UNPAID_TTL_SECONDS: 900
+    depends_on:
+      app:
+        condition: service_healthy
+    restart: unless-stopped
 
   mysql:
     image: mysql:8.4
