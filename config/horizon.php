@@ -215,7 +215,8 @@ return [
     'environments' => [
         'production' => [
             'supervisor-1' => [
-                'maxProcesses' => 10,
+                // Two workers fit a 4 GB VPS next to MySQL, Redis, and php-fpm.
+                'maxProcesses' => (int) env('HORIZON_MAX_PROCESSES', 2),
                 'balanceMaxShift' => 1,
                 'balanceCooldown' => 3,
             ],

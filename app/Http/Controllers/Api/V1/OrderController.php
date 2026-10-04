@@ -21,12 +21,14 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Routing\Attributes\Controllers\Authorize;
+use Illuminate\Routing\Attributes\Controllers\Middleware;
 
 #[Group('Orders', weight: 4)]
 #[Authorize('admin', only: ['ship', 'complete', 'refund'])]
 class OrderController extends Controller
 {
     #[HeaderParameter('Idempotency-Key', description: 'Replays the same checkout instead of creating a second order.', required: false, type: 'string')]
+    #[Middleware('throttle:checkout')]
     public function store(CheckoutOrderRequest $request, PlaceOrder $place): JsonResponse
     {
         $key = $request->input('idempotency_key');
@@ -76,6 +78,7 @@ class OrderController extends Controller
         return OrderResource::make($transitions->complete($order));
     }
 
+    #[Middleware('throttle:checkout')]
     public function pay(PayOrderRequest $request, Order $order, PayOrder $pay): PaymentIntentResource
     {
         return PaymentIntentResource::make($pay->execute(

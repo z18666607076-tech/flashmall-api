@@ -1,0 +1,13 @@
+date_utc=2026-10-04T09:30:01Z
+uname=Linux cursor 6.12.94+ #1 SMP PREEMPT_DYNAMIC Fri Oct  2 18:10:29 UTC 2026 x86_64 x86_64 x86_64 GNU/Linux
+nproc=4
+meminfo:
+MemTotal:       16398384 kB
+MemFree:         2671340 kB
+MemAvailable:    4845864 kB
+Buffers:          255236 kB
+Cached:          1610160 kB
+cpu:
+model name	: Intel(R) Xeon(R) Processor
+cpu cores	: 4
+k6=k6 v1.4.2 (commit/5b725e8a6a, go1.25.4, linux/amd64)

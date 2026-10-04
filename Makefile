@@ -1,4 +1,4 @@
-.PHONY: up down logs test lint analyse
+.PHONY: up down logs test lint analyse prod prod-down load
 
 up:
 	docker compose up -d --build
@@ -22,3 +22,12 @@ lint:
 
 analyse:
 	docker compose exec -T app vendor/bin/phpstan analyse --memory-limit=1G --no-progress
+
+prod:
+	docker compose --env-file .env.prod -f docker-compose.prod.yml up -d --build
+
+prod-down:
+	docker compose --env-file .env.prod -f docker-compose.prod.yml down
+
+load:
+	./load/run.sh
