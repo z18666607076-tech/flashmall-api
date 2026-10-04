@@ -12,6 +12,7 @@ use App\Models\CartItem;
 use App\Models\User;
 use Dedoc\Scramble\Attributes\Group;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Attributes\Controllers\Middleware;
 
 #[Group('Cart', weight: 3)]
 class CartController extends Controller
@@ -21,6 +22,7 @@ class CartController extends Controller
         return CartResource::make($carts->show($this->user($request)));
     }
 
+    #[Middleware('throttle:checkout')]
     public function store(AddCartItemRequest $request, CartService $carts): CartResource
     {
         return CartResource::make($carts->add(
@@ -30,6 +32,7 @@ class CartController extends Controller
         ));
     }
 
+    #[Middleware('throttle:checkout')]
     public function update(UpdateCartItemRequest $request, CartItem $item, CartService $carts): CartResource
     {
         return CartResource::make($carts->update(
@@ -39,6 +42,7 @@ class CartController extends Controller
         ));
     }
 
+    #[Middleware('throttle:checkout')]
     public function destroy(Request $request, CartItem $item, CartService $carts): CartResource
     {
         return CartResource::make($carts->remove($this->user($request), $item));

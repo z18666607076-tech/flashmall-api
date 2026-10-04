@@ -48,6 +48,11 @@ redis.call('SET', KEYS[1], 0)
 return tonumber(stock)
 LUA;
 
+    public function forget(int $saleId): void
+    {
+        $this->redis()->del($this->stockKey($saleId), $this->buyersKey($saleId));
+    }
+
     public function seed(int $saleId, int $stock, int $ttlSeconds): void
     {
         $redis = $this->redis();

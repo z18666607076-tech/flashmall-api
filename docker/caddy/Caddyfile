@@ -1,0 +1,26 @@
+{
+	email {$ACME_EMAIL:admin@example.com}
+	auto_https {$CADDY_AUTO_HTTPS:on}
+	admin off
+}
+
+{$SITE_ADDRESS:localhost} {
+	root * /var/www/html/public
+	encode gzip
+	header {
+		X-Content-Type-Options nosniff
+		Referrer-Policy no-referrer
+		X-Frame-Options DENY
+		-Server
+	}
+	@horizon path /horizon /horizon/*
+	respond @horizon "Not found." 404
+	php_fastcgi app:9000
+	file_server
+}
+
+# Container-local health check. This port is not published.
+:8081 {
+	root * /var/www/html/public
+	php_fastcgi app:9000
+}

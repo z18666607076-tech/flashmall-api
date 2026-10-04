@@ -1,0 +1,70 @@
+# Production image: PHP-FPM for the app, Horizon, and the scheduler.
+# The web target is Caddy with a copy of public/, so static files and PHP
+# share the same document root without a bind mount.
+
+ARG PHP_IMAGE=php:8.4-fpm-bookworm
+ARG COMPOSER_IMAGE=composer:2
+ARG CADDY_IMAGE=caddy:2-alpine
+ARG PHP_EXTENSION_INSTALLER=mlocati/php-extension-installer:2
+
+FROM ${PHP_EXTENSION_INSTALLER} AS php-ext
+
+FROM ${COMPOSER_IMAGE} AS composer-bin
+
+FROM ${PHP_IMAGE} AS app
+
+COPY --from=php-ext /usr/bin/install-php-extensions /usr/local/bin/
+
+ARG APT_MIRROR=deb.debian.org
+ARG COMPOSER_MIRROR=
+
+RUN if [ "$APT_MIRROR" != "deb.debian.org" ]; then \
+      sed -i "s|deb.debian.org|${APT_MIRROR}|g; s|security.debian.org|${APT_MIRROR}|g" /etc/apt/sources.list.d/debian.sources; \
+    fi \
+    && install-php-extensions pdo_mysql bcmath intl zip opcache redis pcntl posix \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends procps \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY --from=composer-bin /usr/bin/composer /usr/bin/composer
+
+WORKDIR /var/www/html
+
+ENV COMPOSER_ALLOW_SUPERUSER=1
+
+COPY docker/php/php-prod.ini /usr/local/etc/php/conf.d/zz-prod.ini
+COPY docker/php/opcache.ini /usr/local/etc/php/conf.d/zz-opcache.ini
+COPY docker/php/www.conf /usr/local/etc/php-fpm.d/www.conf
+COPY docker/php/entrypoint.prod.sh /usr/local/bin/entrypoint-prod
+RUN chmod +x /usr/local/bin/entrypoint-prod
+
+COPY composer.json composer.lock ./
+
+RUN if [ -n "$COMPOSER_MIRROR" ]; then composer config -g repos.packagist composer "$COMPOSER_MIRROR"; fi \
+    && composer install --no-dev --no-interaction --prefer-dist --no-scripts --no-autoloader
+
+COPY app app
+COPY bootstrap bootstrap
+COPY config config
+COPY database database
+COPY public public
+COPY resources resources
+COPY routes routes
+COPY artisan ./
+
+RUN composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader --classmap-authoritative \
+    && mkdir -p storage/framework/cache/data storage/framework/sessions storage/framework/views storage/logs bootstrap/cache \
+    && chown -R www-data:www-data storage bootstrap/cache \
+    && chmod -R ug+rwx storage bootstrap/cache
+
+EXPOSE 9000
+
+ENTRYPOINT ["entrypoint-prod"]
+CMD ["php-fpm"]
+
+FROM ${CADDY_IMAGE} AS web
+
+RUN apk add --no-cache wget
+
+COPY --from=app /var/www/html/public /var/www/html/public
+COPY docker/caddy/Caddyfile /etc/caddy/Caddyfile

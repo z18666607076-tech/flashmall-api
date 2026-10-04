@@ -3,6 +3,7 @@
 namespace App\Payments;
 
 use App\Contracts\PaymentGateway;
+use App\Demo\DemoMode;
 use App\Exceptions\CommerceException;
 use InvalidArgumentException;
 
@@ -17,6 +18,8 @@ class PaymentGateways
 
     public function get(string $channel): PaymentGateway
     {
+        DemoMode::apply();
+
         $driver = config('payments.driver');
 
         if ($driver !== 'fake' && $driver !== 'http') {
